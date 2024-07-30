@@ -9,18 +9,44 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { expect } from '@jest/globals';
 
 import { RegisterComponent } from './register.component';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { SessionService } from 'src/app/services/session.service';
+import { of, throwError } from 'rxjs';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
+  let router: Router;
+  let authService: AuthService;
+
+  /**
+   * Mock des Injections de dépendances
+   */
+
+  // Mock du Router
+
+  const routerMock ={
+      navigate : jest.fn()
+    }
+
+  // Mock du AuthService
+
+  const authServiceMock = {
+      register : jest.fn()
+    }
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [RegisterComponent],
+      providers : [
+        {provide : Router, useValue : routerMock},
+        {provide : AuthService, useValue : authServiceMock}
+      ],
       imports: [
         BrowserAnimationsModule,
         HttpClientModule,
-        ReactiveFormsModule,  
+        ReactiveFormsModule,
         MatCardModule,
         MatFormFieldModule,
         MatIconModule,
@@ -32,9 +58,40 @@ describe('RegisterComponent', () => {
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    router = TestBed.inject(Router)
+    authService = TestBed.inject(AuthService);
+    (authService.register as jest.Mock).mockReturnValue(of('test'))
   });
+
+  afterEach(()=> {
+    jest.resetAllMocks();
+  })
+
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+   /**
+   * tests de la méthode submit
+   */
+
+   it('should submit with success', () =>{
+    const navigateSpy = jest.spyOn(router, 'navigate')
+    const loginSpy = jest.spyOn(authService, 'register');
+    component.submit();
+    // mock router , session service, login
+    expect(navigateSpy).toHaveBeenCalledWith(['/login']);
+    expect(loginSpy).toHaveBeenCalledWith(component.form.value)
+  })
+
+  it('should submit with error', () => {
+    jest.spyOn(authService, 'register').mockReturnValueOnce(throwError(() => new Error('Login Error')));
+    const navigateSpy = jest.spyOn(router, 'navigate')
+    component.submit();
+
+    expect(navigateSpy).not.toHaveBeenCalled()
+    expect(component.onError).toBe(true)
+
+  })
 });
