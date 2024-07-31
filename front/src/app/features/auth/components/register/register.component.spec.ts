@@ -96,31 +96,41 @@ describe('RegisterComponent', () => {
   })
 
 
+
+
+
+  describe('tests integrations', () => {
   /**
    * test validators form
    */
-
+  const dom = fixture.nativeElement;
   it('should invalidate form', () => {
-    component.form.controls['email'].setValue('');
-    component.form.controls['firstName'].setValue('');
-    component.form.controls['lastName'].setValue('');
-    component.form.controls['password'].setValue('');
+
+
+
+    dom.querySelector('input[placeholder="email"]').value = ""
+    dom.querySelector('input[placeholder="firstName"]').value = ""
+    dom.querySelector('input[placeholder="lastName"]').value = ""
+    dom.querySelector('input[placeholder="password"]').value = ""
     fixture.detectChanges();
 
     expect(component.form.invalid).toBeTruthy();
 
   });
 
-  it('should validate form', () => {
-    component.form.controls['email'].setValue('khalfallah.razzak@gmail.com');
-    component.form.controls['firstName'].setValue('razzak');
-    component.form.controls['lastName'].setValue('khalfallah');
-    component.form.controls['password'].setValue('abdel2020');
+  fit('should validate form', () => {
+    dom.querySelector('input[placeholder="email"]').value = "khalfallah.razzak@gmail.com"
+    dom.querySelector('input[placeholder="firstName"]').value = "razzak"
+    dom.querySelector('input[placeholder="lastName"]').value = "khalfallah"
+    dom.querySelector('input[placeholder="password"]').value = "abdel2020"
     fixture.detectChanges();
 
     expect(component.form.valid).toBeTruthy();
 
   });
+  })
+
+
 
 
 
