@@ -114,4 +114,26 @@ describe('LoginComponent', () => {
 
   })
 
+    /**
+   * test validators form
+   */
+
+    it('should invalidate form', () => {
+      component.form.controls['email'].setValue('');
+      component.form.controls['password'].setValue('');
+      fixture.detectChanges();
+
+      expect(component.form.invalid).toBeTruthy();
+
+    });
+
+    it('should validate form', () => {
+      component.form.controls['email'].setValue('khalfallah.razzak@gmail.com');
+      component.form.controls['password'].setValue('abdel2020');
+      fixture.detectChanges();
+
+      expect(component.form.valid).toBeTruthy();
+
+    });
+
 });

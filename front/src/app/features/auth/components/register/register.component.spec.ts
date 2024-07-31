@@ -94,4 +94,44 @@ describe('RegisterComponent', () => {
     expect(component.onError).toBe(true)
 
   })
+
+
+
+
+
+  describe('tests integrations', () => {
+  /**
+   * test validators form
+   */
+  const dom = fixture.nativeElement;
+  it('should invalidate form', () => {
+
+
+
+    dom.querySelector('input[placeholder="email"]').value = ""
+    dom.querySelector('input[placeholder="firstName"]').value = ""
+    dom.querySelector('input[placeholder="lastName"]').value = ""
+    dom.querySelector('input[placeholder="password"]').value = ""
+    fixture.detectChanges();
+
+    expect(component.form.invalid).toBeTruthy();
+
+  });
+
+  fit('should validate form', () => {
+    dom.querySelector('input[placeholder="email"]').value = "khalfallah.razzak@gmail.com"
+    dom.querySelector('input[placeholder="firstName"]').value = "razzak"
+    dom.querySelector('input[placeholder="lastName"]').value = "khalfallah"
+    dom.querySelector('input[placeholder="password"]').value = "abdel2020"
+    fixture.detectChanges();
+
+    expect(component.form.valid).toBeTruthy();
+
+  });
+  })
+
+
+
+
+
 });
