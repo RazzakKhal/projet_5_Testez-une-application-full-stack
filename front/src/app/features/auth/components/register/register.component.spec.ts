@@ -94,4 +94,34 @@ describe('RegisterComponent', () => {
     expect(component.onError).toBe(true)
 
   })
+
+
+  /**
+   * test validators form
+   */
+
+  it('should invalidate form', () => {
+    component.form.controls['email'].setValue('');
+    component.form.controls['firstName'].setValue('');
+    component.form.controls['lastName'].setValue('');
+    component.form.controls['password'].setValue('');
+    fixture.detectChanges();
+
+    expect(component.form.invalid).toBeTruthy();
+
+  });
+
+  it('should validate form', () => {
+    component.form.controls['email'].setValue('khalfallah.razzak@gmail.com');
+    component.form.controls['firstName'].setValue('razzak');
+    component.form.controls['lastName'].setValue('khalfallah');
+    component.form.controls['password'].setValue('abdel2020');
+    fixture.detectChanges();
+
+    expect(component.form.valid).toBeTruthy();
+
+  });
+
+
+
 });
