@@ -46,7 +46,8 @@ describe('DetailComponent', () => {
   let fixture: ComponentFixture<DetailComponent>;
   let service: SessionService;
   let loader: HarnessLoader;
-
+  let sessionApiService : SessionApiService;
+  let teacherService : TeacherService;
 
   const mockSessionService = {
     sessionInformation: {
@@ -82,6 +83,8 @@ describe('DetailComponent', () => {
       ],
     }).compileComponents();
     service = TestBed.inject(SessionService);
+    sessionApiService = TestBed.inject(SessionApiService)
+    teacherService = TestBed.inject(TeacherService)
     fixture = TestBed.createComponent(DetailComponent);
     component = fixture.componentInstance;
     loader = TestbedHarnessEnvironment.loader(fixture);
@@ -92,6 +95,16 @@ describe('DetailComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  /**
+   * tests la session a bien été chargée
+   */
+
+  it('should have fetch sessions at intialization', () => {
+    const spyDetailsSessionApi = jest.spyOn(sessionApiService, 'detail')
+    const spyDetailsTeacher = jest.spyOn(teacherService, 'detail')
+    expect(spyDetailsSessionApi).toHaveBeenCalled()
+    expect(spyDetailsTeacher).toHaveBeenCalledWith('1')
+  })
 
   /**
    * tests sur l'apparation du bouton Delete en fonction d'admin ou non
@@ -124,6 +137,7 @@ describe('DetailComponent', () => {
     const updatedDiv = fixture.debugElement.query(By.css('.updated')).nativeElement;
     const description = fixture.debugElement.query(By.css('.description')).nativeElement;
     const spans = dom.querySelectorAll('span');
+
     expect(spans[0].textContent).toEqual("Delete")
     expect(spans[1].textContent).toEqual("Margot DELAHAYE")
     expect(spans[2].textContent).toEqual("1 attendees")
@@ -133,5 +147,7 @@ describe('DetailComponent', () => {
     expect(description.textContent).toContain('test');
 
   })
+
+
 });
 
