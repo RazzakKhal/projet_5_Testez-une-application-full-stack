@@ -1,7 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterTestingModule, } from '@angular/router/testing';
 import { expect } from '@jest/globals';
 import { SessionService } from '../../../../services/session.service';
@@ -15,21 +15,22 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { TeacherService } from 'src/app/services/teacher.service';
 import { By } from '@angular/platform-browser';
+import { ActivatedRoute, Router } from '@angular/router';
 
 
 const sessionData =
-  {
-    "id": 1,
-    "name": "testttt",
-    "date": "2024-07-10T00:00:00.000+00:00",
-    "teacher_id": 1,
-    "description": "test",
-    "users": [
-      2
-    ],
-    "createdAt": "2024-07-29T19:24:57",
-    "updatedAt": "2024-07-29T19:24:58"
-  }
+{
+  "id": 1,
+  "name": "testttt",
+  "date": "2024-07-10T00:00:00.000+00:00",
+  "teacher_id": 1,
+  "description": "test",
+  "users": [
+    2
+  ],
+  "createdAt": "2024-07-29T19:24:57",
+  "updatedAt": "2024-07-29T19:24:58"
+}
 
 
 const teacher = {
@@ -46,8 +47,25 @@ describe('DetailComponent', () => {
   let fixture: ComponentFixture<DetailComponent>;
   let service: SessionService;
   let loader: HarnessLoader;
-  let sessionApiService : SessionApiService;
-  let teacherService : TeacherService;
+  let sessionApiService: SessionApiService;
+  let teacherService: TeacherService;
+  let router: Router;
+  let matSnackBat : MatSnackBar;
+
+  const mockMatSnackBat = {
+    open : jest.fn()
+  }
+
+  const mockActivatedRoute = {
+    snapshot: {
+      paramMap: {
+        get: () => '1'
+      }
+    }
+  }
+  const mockRouter = {
+    navigate: jest.fn()
+  }
 
   const mockSessionService = {
     sessionInformation: {
@@ -57,7 +75,8 @@ describe('DetailComponent', () => {
   }
 
   const mockSessionApiService = {
-    detail: jest.fn().mockReturnValue(of(sessionData))
+    detail: jest.fn().mockReturnValue(of(sessionData)),
+    delete: jest.fn().mockReturnValue(of({}))
   }
 
   const mockTeacherService = {
@@ -67,7 +86,6 @@ describe('DetailComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule,
         HttpClientModule,
         MatSnackBarModule,
         MatCardModule,
@@ -77,7 +95,10 @@ describe('DetailComponent', () => {
       declarations: [DetailComponent],
       providers: [{ provide: SessionService, useValue: mockSessionService },
       { provide: SessionApiService, useValue: mockSessionApiService },
-      {provide : TeacherService, useValue : mockTeacherService}
+      { provide: TeacherService, useValue: mockTeacherService },
+      { provide: Router, useValue: mockRouter },
+      { provide: ActivatedRoute, useValue: mockActivatedRoute },
+      { provide: MatSnackBar, useValue: mockMatSnackBat }
 
 
       ],
@@ -85,6 +106,8 @@ describe('DetailComponent', () => {
     service = TestBed.inject(SessionService);
     sessionApiService = TestBed.inject(SessionApiService)
     teacherService = TestBed.inject(TeacherService)
+    matSnackBat = TestBed.inject(MatSnackBar)
+    router = TestBed.inject(Router)
     fixture = TestBed.createComponent(DetailComponent);
     component = fixture.componentInstance;
     loader = TestbedHarnessEnvironment.loader(fixture);
@@ -148,6 +171,25 @@ describe('DetailComponent', () => {
 
   })
 
+  /**
+   * tests sur la suppression de la session
+   */
+
+  it('should delete session', async () => {
+    const spyDelete = jest.spyOn(sessionApiService, 'delete')
+    const spyNavigate = jest.spyOn(router, 'navigate')
+    const spyOpen = jest.spyOn(matSnackBat, 'open')
+    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/i }));
+
+    await deleteButton.click();
+
+
+    expect(spyDelete).toHaveBeenCalled()
+    expect(spyOpen).toHaveBeenCalled()
+    expect(spyNavigate).toHaveBeenCalled()
+
+
+  })
 
 });
 
