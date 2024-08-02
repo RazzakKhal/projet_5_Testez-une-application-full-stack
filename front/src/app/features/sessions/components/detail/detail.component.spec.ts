@@ -2,7 +2,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { RouterTestingModule, } from '@angular/router/testing';
 import { expect } from '@jest/globals';
 import { SessionService } from '../../../../services/session.service';
 import { MatButtonHarness } from '@angular/material/button/testing';
@@ -184,9 +183,9 @@ describe('DetailComponent', () => {
     await deleteButton.click();
 
 
-    expect(spyDelete).toHaveBeenCalled()
-    expect(spyOpen).toHaveBeenCalled()
-    expect(spyNavigate).toHaveBeenCalled()
+    expect(spyDelete).toHaveBeenCalledWith("1")
+    expect(spyOpen).toHaveBeenCalledWith('Session deleted !', 'Close', { duration: 3000 })
+    expect(spyNavigate).toHaveBeenCalledWith(['sessions'])
 
 
   })
