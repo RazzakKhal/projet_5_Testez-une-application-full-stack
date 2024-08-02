@@ -14,6 +14,9 @@ import { LoginComponent } from './login.component';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { of, throwError } from 'rxjs';
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatInputHarness } from '@angular/material/input/testing';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -21,6 +24,8 @@ describe('LoginComponent', () => {
   let router: Router;
   let authService: AuthService;
   let sessionService: SessionService;
+  let loader: HarnessLoader;
+
 
   /**
    * Mock des Injections de dépendances
@@ -66,6 +71,7 @@ describe('LoginComponent', () => {
       .compileComponents();
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
+    loader = TestbedHarnessEnvironment.loader(fixture);
     fixture.detectChanges();
 
     // récupération des services injectés dans mon composant
@@ -114,26 +120,41 @@ describe('LoginComponent', () => {
 
   })
 
-    /**
-   * test validators form
+  /**
+   * test d'integrations
+   *
+   * https://angularexperts.io/blog/material-component-testing  pour tester les composants angular material car ils ne se chargent pas de suite
+   * exemple ici: https://github.com/angular/components/blob/main/src/components-examples/material/card/card-harness/card-harness-example.spec.ts
    */
+  it('should invalidate form',async () => {
 
-    it('should invalidate form', () => {
-      component.form.controls['email'].setValue('');
-      component.form.controls['password'].setValue('');
-      fixture.detectChanges();
+    const emailInput = await loader.getHarness(MatInputHarness.with({ placeholder: 'Email' }));
+    const passwordInput = await loader.getHarness(MatInputHarness.with({ placeholder: 'Password' }));
 
-      expect(component.form.invalid).toBeTruthy();
 
-    });
+    await emailInput.setValue('');
+    await passwordInput.setValue('');
 
-    it('should validate form', () => {
-      component.form.controls['email'].setValue('khalfallah.razzak@gmail.com');
-      component.form.controls['password'].setValue('abdel2020');
-      fixture.detectChanges();
+    fixture.detectChanges();
 
-      expect(component.form.valid).toBeTruthy();
+    expect(component.form.invalid).toBeTruthy();
+  });
 
-    });
+  it('should validate form',async () => {
+
+
+    const emailInput = await loader.getHarness(MatInputHarness.with({ placeholder: 'Email' }));
+    const passwordInput = await loader.getHarness(MatInputHarness.with({ placeholder: 'Password' }));
+
+
+    await emailInput.setValue('khalfallah.razzak@gmail.com');
+    await passwordInput.setValue('abdel2020');
+
+    fixture.detectChanges();
+
+    expect(component.form.valid).toBeTruthy();
+
+  });
+
 
 });

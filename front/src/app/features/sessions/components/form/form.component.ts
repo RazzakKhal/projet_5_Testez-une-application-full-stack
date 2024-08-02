@@ -6,6 +6,7 @@ import { SessionService } from '../../../../services/session.service';
 import { TeacherService } from '../../../../services/teacher.service';
 import { Session } from '../../interfaces/session.interface';
 import { SessionApiService } from '../../services/session-api.service';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-form',
@@ -32,6 +33,7 @@ export class FormComponent implements OnInit {
 
   public ngOnInit(): void {
     if (!this.sessionService.sessionInformation!.admin) {
+
       this.router.navigate(['/sessions']);
     }
     const url = this.router.url;

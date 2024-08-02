@@ -9,6 +9,7 @@ import { ListComponent } from './list.component';
 import { SessionApiService } from '../../services/session-api.service';
 import { of } from 'rxjs';
 import { RouterTestingModule } from '@angular/router/testing';
+import { By } from '@angular/platform-browser';
 
 describe('ListComponent', () => {
   let component: ListComponent;
@@ -69,7 +70,7 @@ describe('ListComponent', () => {
    */
   it('should display sessions', () => {
     fixture.detectChanges();
-    const sessions = fixture.nativeElement.querySelectorAll('.item');
+    const sessions = fixture.debugElement.queryAll(By.css('.item'));
     const allSpy = jest.spyOn(sessionApiService, 'all');
     expect(allSpy).toHaveBeenCalled();
     expect(sessions.length).toEqual(1);
@@ -79,7 +80,7 @@ describe('ListComponent', () => {
 
   it('should display Create and Detail button',() => {
     fixture.detectChanges();
-    const buttons = fixture.nativeElement.querySelectorAll('.ml1');
+    const buttons = fixture.debugElement.queryAll(By.css('.ml1'));
     expect(buttons.length).toEqual(3);
 
   })
@@ -87,7 +88,7 @@ describe('ListComponent', () => {
   it('should not display Create and Detail button',() => {
     sessionService.sessionInformation!.admin = false;
     fixture.detectChanges();
-    const buttons = fixture.nativeElement.querySelectorAll('.ml1');
+    const buttons = fixture.debugElement.queryAll(By.css('.ml1'));
     expect(buttons.length).toEqual(1);
 
   })
