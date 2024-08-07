@@ -7,6 +7,7 @@ import { SessionService } from '../../../../services/session.service';
 import { TeacherService } from '../../../../services/teacher.service';
 import { Session } from '../../interfaces/session.interface';
 import { SessionApiService } from '../../services/session-api.service';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-detail',
@@ -55,7 +56,11 @@ export class DetailComponent implements OnInit {
   }
 
   public participate(): void {
-    this.sessionApiService.participate(this.sessionId, this.userId).subscribe(_ => this.fetchSession());
+    this.sessionApiService.participate(this.sessionId, this.userId)
+    .pipe(
+      tap((item) => console.log('resultat du participate', item))
+    )
+    .subscribe(_ => this.fetchSession());
   }
 
   public unParticipate(): void {
@@ -65,11 +70,17 @@ export class DetailComponent implements OnInit {
   private fetchSession(): void {
     this.sessionApiService
       .detail(this.sessionId)
+      .pipe(
+        tap((item) => console.log('resultat du detail de sessionApiService', item))
+      )
       .subscribe((session: Session) => {
         this.session = session;
         this.isParticipate = session.users.some(u => u === this.sessionService.sessionInformation!.id);
         this.teacherService
           .detail(session.teacher_id.toString())
+          .pipe(
+            tap((item) => console.log('resultat du detail de teacherService', item))
+          )
           .subscribe((teacher: Teacher) => {this.teacher = teacher;});
       });
   }
