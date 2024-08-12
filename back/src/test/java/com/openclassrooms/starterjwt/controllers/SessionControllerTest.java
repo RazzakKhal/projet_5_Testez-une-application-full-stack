@@ -124,6 +124,12 @@ class SessionControllerTest {
     }
 
     @Test
+    void testUpdate_BadRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/session/invalid-id"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void testDelete_Success() throws Exception {
         when(sessionService.getById(1L)).thenReturn(session);
 
@@ -140,6 +146,7 @@ class SessionControllerTest {
 
         Mockito.verify(sessionService, Mockito.times(1)).participate(1L, 2L);
     }
+
 
     @Test
     public void testNoLongerParticipate_Success() throws Exception {

@@ -65,6 +65,12 @@ class UserControllerTest {
     }
 
     @Test
+    void testFindById_BadRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/user/invalid-id"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void testFindById_NotFound() throws Exception {
         when(userService.findById(anyLong())).thenReturn(null);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/user/1"))
