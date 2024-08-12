@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
@@ -17,6 +19,9 @@ class UserMapperTest {
     private User user;
 
     private UserDto userDto;
+
+    private List<User> userList;
+    private List<UserDto> userDtoList;
     @BeforeEach
     void setUp(){
         user = new User();
@@ -35,6 +40,12 @@ class UserMapperTest {
         userDto.setEmail("khalfallah@gmail.com");
         userDto.setPassword("Admin1234!");
         userDto.setAdmin(true);
+
+        userList = new ArrayList<>();
+        userList.add(user);
+
+        userDtoList = new ArrayList<>();
+        userDtoList.add(userDto);
     }
     @Test
     void testToDto(){
@@ -54,5 +65,29 @@ class UserMapperTest {
         assertEquals(user1.getLastName(), userDto.getLastName());
         assertEquals(user1.getPassword(), userDto.getPassword());
         assertEquals(user1.isAdmin(), userDto.isAdmin());
+    }
+
+    @Test
+    void testToDtoList() {
+        List<UserDto> userDtoList1 = userMapper.toDto(userList);
+
+        assertEquals(userDtoList.size(), userDtoList1.size());
+        assertEquals(userDtoList1.get(0).getEmail(), userList.get(0).getEmail());
+        assertEquals(userDtoList1.get(0).getFirstName(), userList.get(0).getFirstName());
+        assertEquals(userDtoList1.get(0).getLastName(), userList.get(0).getLastName());
+        assertEquals(userDtoList1.get(0).getPassword(), userList.get(0).getPassword());
+        assertEquals(userDtoList1.get(0).isAdmin(), userList.get(0).isAdmin());
+    }
+
+    @Test
+    void testToEntityList() {
+        List<User> userList1 = userMapper.toEntity(userDtoList);
+
+        assertEquals(userList.size(), userList1.size());
+        assertEquals(userList1.get(0).getEmail(), userDtoList.get(0).getEmail());
+        assertEquals(userList1.get(0).getFirstName(), userDtoList.get(0).getFirstName());
+        assertEquals(userList1.get(0).getLastName(), userDtoList.get(0).getLastName());
+        assertEquals(userList1.get(0).getPassword(), userDtoList.get(0).getPassword());
+        assertEquals(userList1.get(0).isAdmin(), userDtoList.get(0).isAdmin());
     }
 }

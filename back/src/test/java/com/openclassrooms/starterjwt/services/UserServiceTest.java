@@ -39,6 +39,7 @@ class UserServiceTest {
     }
     @Test
     void testDeleteById_Success(){
+
         Optional<User> user = userRepository.findByEmail("razzaktest@example.com");
         if(user.isPresent()){
             assertTrue(userRepository.findById(user.get().getId()).isPresent());
@@ -48,13 +49,26 @@ class UserServiceTest {
 
     }
     @Test
-    void testFindById(){
+    void testFindById_Success(){
         Optional<User> user = userRepository.findByEmail("razzaktest@example.com");
-        if(user.isPresent()){
+
             Optional<User> user2 = userRepository.findById(user.get().getId());
             assertTrue(user2.isPresent());
             assertEquals(user2.get().getEmail(), user.get().getEmail());
-        }
+
 
     }
+
+    @Test
+    void testFindById_Failure(){
+        Optional<User> user = userRepository.findByEmail("razzaktest@example.com");
+
+        userRepository.deleteById(user.get().getId());
+        Optional<User> user2 = userRepository.findById(user.get().getId());
+        assertFalse(user2.isPresent());
+
+
+    }
+
+
 }
